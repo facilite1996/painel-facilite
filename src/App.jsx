@@ -56,6 +56,7 @@ function App() {
 
   return (
     <Home
+      usuario={usuarioLogado}
       onLogout={handleLogout}
       onHistorico={() => setTela('historico')}
       onCobrancaFutura={() => setTela('cobrancaFutura')}
@@ -65,4 +66,3 @@ function App() {
 }
 
 export default App;
-

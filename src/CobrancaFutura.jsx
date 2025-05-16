@@ -68,7 +68,7 @@ function CobrancaFutura({ onVoltar }) {
                 <tr key={item.id}>
                   <td>{item.nome}</td>
                   <td>R$ {item.valor}</td>
-                  <td>{item.token}</td>
+                  <td>{'*'.repeat(item.token.length)}</td>
                   <td>
                     {confirmandoId === item.id ? (
                       <>

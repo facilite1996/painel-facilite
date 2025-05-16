@@ -7,7 +7,7 @@ function gerarToken() {
   return 'tok_' + Math.random().toString(36).substring(2, 12);
 }
 
-function Home({ onLogout, onHistorico, onCobrancaFutura, onClientes }) {
+function Home({ onLogout, onHistorico, onCobrancaFutura, onClientes, usuario }) {
   const [clientes, setClientes] = useState([]);
   const [form, setForm] = useState({
     nome: '',
@@ -16,6 +16,8 @@ function Home({ onLogout, onHistorico, onCobrancaFutura, onClientes }) {
     valor: '',
     numeroLocacao: '',
   });
+
+  const isAdmin = usuario?.email === 'admin@facilitelocadora.com';
 
   useEffect(() => {
     const carregarClientes = async () => {
@@ -70,7 +72,7 @@ function Home({ onLogout, onHistorico, onCobrancaFutura, onClientes }) {
       data: new Date(),
     });
 
-    alert(`Pagamento registrado com sucesso!\nToken: ${token}`);
+    alert('Pagamento aprovado com sucesso!');
     setForm({ nome: '', cpf: '', telefone: '', valor: '', numeroLocacao: '' });
   };
 
@@ -95,21 +97,25 @@ function Home({ onLogout, onHistorico, onCobrancaFutura, onClientes }) {
 
           <button type="button" onClick={solicitarPagamento}>Solicitar Pagamento</button>
 
-          <button
-            type="button"
-            onClick={onHistorico}
-            style={{ marginTop: '10px', backgroundColor: '#333', color: '#fff', padding: '12px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
-          >
-            Ver Histórico de Locações
-          </button>
+          {isAdmin && (
+            <>
+              <button
+                type="button"
+                onClick={onHistorico}
+                style={{ marginTop: '10px', backgroundColor: '#333', color: '#fff', padding: '12px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
+              >
+                Ver Histórico de Locações
+              </button>
 
-          <button
-            type="button"
-            onClick={onCobrancaFutura}
-            style={{ marginTop: '10px', backgroundColor: '#444', color: '#fff', padding: '12px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
-          >
-            Cobranças Recorrentes
-          </button>
+              <button
+                type="button"
+                onClick={onCobrancaFutura}
+                style={{ marginTop: '10px', backgroundColor: '#444', color: '#fff', padding: '12px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
+              >
+                Cobranças Recorrentes
+              </button>
+            </>
+          )}
 
           <button
             type="button"
@@ -127,4 +133,3 @@ function Home({ onLogout, onHistorico, onCobrancaFutura, onClientes }) {
 }
 
 export default Home;
-

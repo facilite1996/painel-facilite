@@ -1,28 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import './index.css';
 import { db } from './firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 
 function Historico({ onVoltar, onAbrirDetalhes }) {
   const [cobrancas, setCobrancas] = useState([]);
   const [filtro, setFiltro] = useState('');
 
-  useEffect(() => {
-    const carregarCobrancas = async () => {
-      const querySnapshot = await getDocs(collection(db, 'cobrancas'));
-      const dados = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setCobrancas(dados);
-    };
+  const carregarCobrancas = async () => {
+    const querySnapshot = await getDocs(collection(db, 'cobrancas'));
+    const dados = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Ordenar por data mais recente
+    const ordenado = dados.sort((a, b) => b.data.seconds - a.data.seconds);
+    setCobrancas(ordenado);
+  };
 
+  useEffect(() => {
     carregarCobrancas();
   }, []);
+
+  const excluirCobranca = async (id) => {
+    if (window.confirm('Tem certeza que deseja excluir esta cobrança?')) {
+      await deleteDoc(doc(db, 'cobrancas', id));
+      carregarCobrancas(); // Atualiza a lista após exclusão
+    }
+  };
 
   const cobrancasFiltradas = cobrancas.filter(item =>
     item.nome.toLowerCase().includes(filtro.toLowerCase()) ||
     item.cpf.toLowerCase().includes(filtro.toLowerCase())
   );
 
-  // Relatórios
   const totalLocacoes = cobrancasFiltradas.length;
   const totalValor = cobrancasFiltradas.reduce((soma, item) => {
     const numero = parseFloat(
@@ -57,7 +65,6 @@ function Historico({ onVoltar, onAbrirDetalhes }) {
           }}
         />
 
-        {/* Bloco de resumo */}
         <div style={{ marginBottom: '20px', background: '#f9f9f9', padding: '15px', borderRadius: '8px' }}>
           <p><strong>Total de Locações:</strong> {totalLocacoes}</p>
           <p><strong>Total Aprovadas:</strong> {totalAprovadas}</p>
@@ -77,21 +84,33 @@ function Historico({ onVoltar, onAbrirDetalhes }) {
                 <th>Status</th>
                 <th>Token</th>
                 <th>Data</th>
+                <th>Ação</th>
               </tr>
             </thead>
             <tbody>
               {cobrancasFiltradas.map((item) => (
-                <tr
-                  key={item.id}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => onAbrirDetalhes(item)}
-                >
+                <tr key={item.id}>
                   <td>{item.nome}</td>
                   <td>{item.cpf}</td>
                   <td>{item.valor}</td>
                   <td>{item.status}</td>
                   <td>{'*'.repeat(item.token.length)}</td>
                   <td>{new Date(item.data.seconds * 1000).toLocaleString()}</td>
+                  <td>
+                    <button
+                      onClick={() => excluirCobranca(item.id)}
+                      style={{
+                        backgroundColor: '#d9534f',
+                        color: '#fff',
+                        border: 'none',
+                        padding: '6px 10px',
+                        borderRadius: '5px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Excluir
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -105,3 +124,4 @@ function Historico({ onVoltar, onAbrirDetalhes }) {
 }
 
 export default Historico;
+
