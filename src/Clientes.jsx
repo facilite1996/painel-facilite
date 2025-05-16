@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './index.css';
 import { db } from './firebaseConfig';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { collection, addDoc, getDocs, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 
 function Clientes({ onVoltar }) {
   const [clientes, setClientes] = useState([]);
   const [form, setForm] = useState({ nome: '', cpf: '', telefone: '' });
+  const [editandoId, setEditandoId] = useState(null);
 
   useEffect(() => {
     carregarClientes();
@@ -27,10 +28,33 @@ function Clientes({ onVoltar }) {
       return;
     }
 
-    await addDoc(collection(db, 'clientes'), form);
+    if (editandoId) {
+      await updateDoc(doc(db, 'clientes', editandoId), form);
+      setEditandoId(null);
+      alert('Cliente atualizado com sucesso!');
+    } else {
+      await addDoc(collection(db, 'clientes'), form);
+      alert('Cliente cadastrado com sucesso!');
+    }
+
     setForm({ nome: '', cpf: '', telefone: '' });
     carregarClientes();
-    alert('Cliente cadastrado com sucesso!');
+  };
+
+  const editarCliente = (cliente) => {
+    setForm({ nome: cliente.nome, cpf: cliente.cpf, telefone: cliente.telefone });
+    setEditandoId(cliente.id);
+  };
+
+  const excluirCliente = async (id) => {
+    if (window.confirm('Tem certeza que deseja excluir este cliente?')) {
+      await deleteDoc(doc(db, 'clientes', id));
+      carregarClientes();
+    }
+  };
+
+  const mascararCPF = (cpf) => {
+    return cpf.replace(/(\\d{3})\\d{3}(\\d{3})/, '$1.***.$2');
   };
 
   return (
@@ -41,7 +65,9 @@ function Clientes({ onVoltar }) {
         <input name="nome" type="text" placeholder="Nome" value={form.nome} onChange={handleChange} />
         <input name="cpf" type="text" placeholder="CPF" value={form.cpf} onChange={handleChange} />
         <input name="telefone" type="text" placeholder="Telefone" value={form.telefone} onChange={handleChange} />
-        <button type="button" onClick={cadastrarCliente}>Cadastrar Cliente</button>
+        <button type="button" onClick={cadastrarCliente}>
+          {editandoId ? 'Atualizar Cliente' : 'Cadastrar Cliente'}
+        </button>
 
         <hr style={{ margin: '20px 0' }} />
 
@@ -49,7 +75,18 @@ function Clientes({ onVoltar }) {
         <ul>
           {clientes.map((cliente) => (
             <li key={cliente.id}>
-              <strong>{cliente.nome}</strong> – {cliente.cpf} – {cliente.telefone}
+              <strong>{cliente.nome}</strong> – {mascararCPF(cliente.cpf)} – {cliente.telefone}
+              <div style={{ marginTop: 5 }}>
+                <button style={{ marginRight: 10 }} onClick={() => editarCliente(cliente)}>
+                  Editar
+                </button>
+                <button
+                  style={{ backgroundColor: '#d9534f', color: '#fff', border: 'none', padding: '4px 10px', borderRadius: '4px' }}
+                  onClick={() => excluirCliente(cliente.id)}
+                >
+                  Excluir
+                </button>
+              </div>
             </li>
           ))}
         </ul>

@@ -144,3 +144,46 @@ body {
 input[type="text"]::placeholder {
   color: #999;
 }
+.tabela-cobrancas th:nth-child(1),
+.tabela-cobrancas td:nth-child(1) {
+  min-width: 120px;
+}
+
+.tabela-cobrancas th:nth-child(2),
+.tabela-cobrancas td:nth-child(2) {
+  min-width: 110px;
+}
+
+.tabela-cobrancas th:nth-child(3),
+.tabela-cobrancas td:nth-child(3) {
+  min-width: 70px;
+}
+
+.tabela-cobrancas th:nth-child(4),
+.tabela-cobrancas td:nth-child(4) {
+  min-width: 90px;
+}
+
+.tabela-cobrancas th:nth-child(5),
+.tabela-cobrancas td:nth-child(5) {
+  min-width: 100px;
+}
+
+.tabela-cobrancas th:nth-child(6),
+.tabela-cobrancas td:nth-child(6) {
+  min-width: 140px;
+}
+
+.tabela-cobrancas th:nth-child(7),
+.tabela-cobrancas td:nth-child(7) {
+  min-width: 90px;
+}
+.painel-box {
+  overflow-x: auto; /* Adiciona scroll horizontal se precisar */
+}
+
+.tabela-cobrancas {
+  table-layout: fixed;
+  width: 100%;
+  word-wrap: break-word;
+}

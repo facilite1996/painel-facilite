@@ -9,7 +9,7 @@ function gerarToken() {
 
 function mascararCPF(cpf) {
   if (!cpf) return '';
-  return cpf.replace(/(\\d{3})\\d{3}\\d{3}(\\d{2})/, '$1.***.***-$2');
+  return cpf.replace(/(\d{3})\d{3}\d{3}(\d{2})/, '$1.***.***-$2');
 }
 
 function Home({ onLogout, onHistorico, onCobrancaFutura, onClientes, usuario }) {
@@ -56,7 +56,7 @@ function Home({ onLogout, onHistorico, onCobrancaFutura, onClientes, usuario }) 
       setForm({
         ...form,
         nome: cliente.nome,
-        cpf: cliente.cpf,
+        cpf: mascararCPF(cliente.cpf), // <- Aqui mascarando o CPF
         telefone: cliente.telefone,
       });
     }
@@ -90,7 +90,9 @@ function Home({ onLogout, onHistorico, onCobrancaFutura, onClientes, usuario }) 
           <select onChange={handleSelecionarCliente} style={{ marginBottom: '10px', padding: '10px', width: '100%' }}>
             <option value="">Selecionar Cliente</option>
             {clientes.map((c) => (
-              <option key={c.id} value={c.id}>{c.nome} - {mascararCPF(c.cpf)}</option>
+              <option key={c.id} value={c.id}>
+                {c.nome} - {mascararCPF(c.cpf)}
+              </option>
             ))}
           </select>
 
@@ -104,29 +106,17 @@ function Home({ onLogout, onHistorico, onCobrancaFutura, onClientes, usuario }) 
 
           {isAdmin && (
             <>
-              <button
-                type="button"
-                onClick={onHistorico}
-                style={{ marginTop: '10px', backgroundColor: '#333', color: '#fff', padding: '12px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
-              >
+              <button type="button" onClick={onHistorico} style={{ marginTop: '10px', backgroundColor: '#333', color: '#fff', padding: '12px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}>
                 Ver Histórico de Locações
               </button>
 
-              <button
-                type="button"
-                onClick={onCobrancaFutura}
-                style={{ marginTop: '10px', backgroundColor: '#444', color: '#fff', padding: '12px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
-              >
+              <button type="button" onClick={onCobrancaFutura} style={{ marginTop: '10px', backgroundColor: '#444', color: '#fff', padding: '12px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}>
                 Cobranças Recorrentes
               </button>
             </>
           )}
 
-          <button
-            type="button"
-            onClick={onClientes}
-            style={{ marginTop: '10px', backgroundColor: '#666', color: '#fff', padding: '12px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}
-          >
+          <button type="button" onClick={onClientes} style={{ marginTop: '10px', backgroundColor: '#666', color: '#fff', padding: '12px', borderRadius: '6px', border: 'none', cursor: 'pointer' }}>
             Gerenciar Clientes
           </button>
         </form>
@@ -138,3 +128,4 @@ function Home({ onLogout, onHistorico, onCobrancaFutura, onClientes, usuario }) 
 }
 
 export default Home;
+
