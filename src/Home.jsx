@@ -7,6 +7,11 @@ function gerarToken() {
   return 'tok_' + Math.random().toString(36).substring(2, 12);
 }
 
+function mascararCPF(cpf) {
+  if (!cpf) return '';
+  return cpf.replace(/(\\d{3})\\d{3}\\d{3}(\\d{2})/, '$1.***.***-$2');
+}
+
 function Home({ onLogout, onHistorico, onCobrancaFutura, onClientes, usuario }) {
   const [clientes, setClientes] = useState([]);
   const [form, setForm] = useState({
@@ -85,7 +90,7 @@ function Home({ onLogout, onHistorico, onCobrancaFutura, onClientes, usuario }) 
           <select onChange={handleSelecionarCliente} style={{ marginBottom: '10px', padding: '10px', width: '100%' }}>
             <option value="">Selecionar Cliente</option>
             {clientes.map((c) => (
-              <option key={c.id} value={c.id}>{c.nome} - {c.cpf}</option>
+              <option key={c.id} value={c.id}>{c.nome} - {mascararCPF(c.cpf)}</option>
             ))}
           </select>
 

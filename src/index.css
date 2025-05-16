@@ -51,12 +51,13 @@ body {
   margin-bottom: 10px;
   font-size: 14px;
 }
+
 /* === Estilos da Home.jsx (Facilite Painel) === */
 
 .home-container {
   padding: 40px;
   background-color: #ffa500;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .titulo-facilite {
@@ -104,6 +105,7 @@ body {
   border: none;
   cursor: pointer;
 }
+
 .tabela-cobrancas {
   width: 100%;
   border-collapse: collapse;
@@ -111,15 +113,25 @@ body {
   font-size: 14px;
 }
 
-.tabela-cobrancas th, .tabela-cobrancas td {
+.tabela-cobrancas th,
+.tabela-cobrancas td {
   border: 1px solid #ccc;
   padding: 8px;
   text-align: left;
+  vertical-align: middle;
+  word-break: break-word;
+}
+
+.tabela-cobrancas th:last-child,
+.tabela-cobrancas td:last-child {
+  text-align: center;
+  width: 130px;
 }
 
 .tabela-cobrancas th {
   background-color: #f0f0f0;
 }
+
 .tabela-cobrancas button {
   padding: 6px 10px;
   background-color: #000;
@@ -128,6 +140,7 @@ body {
   border-radius: 6px;
   cursor: pointer;
 }
+
 input[type="text"]::placeholder {
   color: #999;
 }

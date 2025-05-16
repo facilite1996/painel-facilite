@@ -3,6 +3,11 @@ import './index.css';
 import { db } from './firebaseConfig';
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 
+function mascararCPF(cpf) {
+  if (!cpf) return '';
+  return cpf.replace(/(\d{3})\d{3}\d{3}(\d{2})/, '$1.***.***-$2');
+}
+
 function Historico({ onVoltar, onAbrirDetalhes }) {
   const [cobrancas, setCobrancas] = useState([]);
   const [filtro, setFiltro] = useState('');
@@ -10,7 +15,6 @@ function Historico({ onVoltar, onAbrirDetalhes }) {
   const carregarCobrancas = async () => {
     const querySnapshot = await getDocs(collection(db, 'cobrancas'));
     const dados = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    // Ordenar por data mais recente
     const ordenado = dados.sort((a, b) => b.data.seconds - a.data.seconds);
     setCobrancas(ordenado);
   };
@@ -22,7 +26,7 @@ function Historico({ onVoltar, onAbrirDetalhes }) {
   const excluirCobranca = async (id) => {
     if (window.confirm('Tem certeza que deseja excluir esta cobrança?')) {
       await deleteDoc(doc(db, 'cobrancas', id));
-      carregarCobrancas(); // Atualiza a lista após exclusão
+      carregarCobrancas();
     }
   };
 
@@ -91,7 +95,7 @@ function Historico({ onVoltar, onAbrirDetalhes }) {
               {cobrancasFiltradas.map((item) => (
                 <tr key={item.id}>
                   <td>{item.nome}</td>
-                  <td>{item.cpf}</td>
+                  <td>{mascararCPF(item.cpf)}</td>
                   <td>{item.valor}</td>
                   <td>{item.status}</td>
                   <td>{'*'.repeat(item.token.length)}</td>
@@ -124,4 +128,3 @@ function Historico({ onVoltar, onAbrirDetalhes }) {
 }
 
 export default Historico;
-
